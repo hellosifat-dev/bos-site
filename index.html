@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOS — the business operating system for growing companies</title>
+<meta name="description" content="BOS is an open-source, multi-tenant business operating system: point of sale, inventory, HR and payroll, and double-entry accounting for every branch, in one app. Laravel 12 and React. Built by Sifat Ahmed.">
+<meta property="og:title" content="BOS — run sales, stock, people and books in one place">
+<meta property="og:description" content="Multi-branch POS, inventory, HR, payroll and automatic double-entry accounting. Open source.">
+<meta property="og:image" content="img/dashboard.webp">
+<meta name="theme-color" content="#2563eb">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%232563eb'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='700' font-size='17' fill='white' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+  :root { --accent: #2563eb; --accent-2: #0ea5e9; --accent-ink: #fff; }
+  :root[data-theme="dark"] { --accent: #93b4ff; --accent-2: #7dd3fc; --accent-ink: #0b1a3a; }
+  .logo-mark { width: 30px; height: 30px; border-radius: 9px; background: #2563eb; color: #fff; display: grid; place-items: center; font: 700 16px var(--display); }
+  .ledger { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; font-size: 14.5px; }
+  .ledger th, .ledger td { padding: 13px 18px; text-align: left; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+  .ledger th { font: 500 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); background: var(--bg-2, transparent); }
+  .ledger tr:last-child td { border-bottom: 0; }
+  .ledger td:first-child { font-weight: 600; }
+  .ledger td:not(:first-child) { color: var(--ink-2); }
+  .table-wrap { overflow-x: auto; border-radius: var(--radius); }
+  .principles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  @media (max-width: 760px) { .principles { grid-template-columns: 1fr; } }
+  .principle { display: flex; gap: 16px; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  .principle h4 { font-size: 16.5px; margin: 0 0 4px; }
+  .principle p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
+</style>
+<script src="base.js"></script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <defs>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+    <symbol id="i-inbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h5l1.5 3h5l1.5-3h5"/><path d="M5.5 5h13L21 13v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
+    <symbol id="i-db" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M14 9l2 2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4M4 20h16"/><path d="m7 15 4-4 3 3 5-6"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.3"/><circle cx="18" cy="20" r="1.3"/><path d="M2 3h3l2.6 12.2a1 1 0 0 0 1 .8h9.7a1 1 0 0 0 1-.8L21 7H6"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V5a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V6"/><path d="M17 13.5h.01"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="13" height="12" rx="2"/><path d="m15.5 10.5 6-3.5v10l-6-3.5"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></symbol>
+    <symbol id="i-radio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19 5a10 10 0 0 1 0 14M5 19A10 10 0 0 1 5 5"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 22l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></symbol>
+    <symbol id="i-badge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 2.4 2.2 3.2-.4.7 3.2 2.9 1.6-1.4 2.9 1.4 2.9-2.9 1.6-.7 3.2-3.2-.4L12 22l-2.4-2.2-3.2.4-.7-3.2-2.9-1.6 1.4-2.9-1.4-2.9 2.9-1.6.7-3.2 3.2.4z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M12 15h5"/></symbol>
+    <symbol id="i-flask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3"/><path d="M7 15h10"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v15H6a2 2 0 0 0-2 2 2 2 0 0 0 2 2h14"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+    <symbol id="i-webhook" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c.01-.7.2-1.4.57-2"/><path d="m6 17 3.13-5.78c.53-.97.1-2.18-.5-3.1a4 4 0 1 1 6.89-4.06"/><path d="m12 6 3.13 5.73C15.66 12.7 16.9 13 18 13a4 4 0 0 1 0 8"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M9 21v-4h6v4M8 7h.01M12 7h.01M16 7h.01M8 11h.01M12 11h.01M16 11h.01"/></symbol>
+    <symbol id="i-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="8" r="2"/><path d="M6 7v10M18 10c0 4-6 3-11 7"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v18l2.3-1.5L9.7 21l2.3-1.5 2.3 1.5 2.4-1.5L19 21V3l-2.3 1.5L14.3 3 12 4.5 9.7 3 7.3 4.5z"/><path d="M9 9h6M9 13h6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-swap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4 3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 0 0 0 18c1 0 1.5-.8 1.5-1.6 0-.9-.7-1.4-.7-2.3 0-1 .8-1.6 1.7-1.6H17a4 4 0 0 0 4-4c0-4.7-4-8.5-9-8.5z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10.5" cy="7.5" r="1"/><circle cx="15" cy="7.5" r="1"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.9-3.5M4 4v4h4M4 13a8 8 0 0 0 14.9 3.5M20 20v-4h-4"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 21h14M6 7h12M6 7l-3 7a3 3 0 0 0 6 0zM18 7l-3 7a3 3 0 0 0 6 0z"/></symbol>
+    <symbol id="i-lang" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h9M8.5 3v2M6 5c.5 3 3 6 6 7M11 5c-.5 3-3 6-6.5 7.5"/><path d="m13 21 4-10 4 10M14.5 17.5h5"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="BOS home"><span class="logo-mark">B</span>BOS</a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#modules">Modules</a>
+      <a href="#screens">Screens</a>
+      <a href="#branches">Branches</a>
+      <a href="#accounting">Accounting</a>
+      <a href="#tech">Tech</a>
+    </nav>
+    <div class="nav-end">
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="Switch light or dark theme"><svg class="sun"><use href="#i-sun"/></svg><svg class="moon"><use href="#i-moon"/></svg></button>
+      <a class="btn btn-primary btn-sm" href="https://github.com/hellosifat-dev/Bos" target="_blank" rel="noopener"><svg><use href="#i-github"/></svg>GitHub</a>
+      <button class="icon-btn menu-btn" id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false"><svg><use href="#i-menu"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="hero wrap" id="top">
+    <span class="pill reveal"><span class="dot"></span>Open source · all five phases built</span>
+    <h1 class="reveal">Run the whole business <span class="accent">from one screen.</span></h1>
+    <p class="lead reveal">BOS is a business operating system for shops and companies with more than one branch. Sell at the counter, track stock across warehouses, pay your team and keep the books, while every sale posts itself to the ledger.</p>
+    <div class="hero-cta reveal">
+      <a class="btn btn-primary" href="#modules">Explore the modules <svg><use href="#i-arrow"/></svg></a>
+      <a class="btn btn-ghost" href="https://github.com/hellosifat-dev/Bos" target="_blank" rel="noopener"><svg><use href="#i-github"/></svg>View source</a>
+    </div>
+    <div class="hero-meta reveal"><span>Laravel 12 + React 18</span><span>Multi-tenant SaaS</span><span>11 built-in roles</span><span>Double-entry ledger</span></div>
+    <div class="hero-shot reveal">
+      <div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>BOS · Dashboard</span></div><img class="zoomable" src="img/dashboard.webp" alt="BOS dashboard showing today's sales, monthly sales, receivables, low stock items, customers, branches, team members and recent activity" width="1440" height="900" loading="eager"></div>
+    </div>
+  </div>
+
+  <section class="section-alt" id="modules">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Modules</span>
+        <h2>Everything a growing business runs on.</h2>
+        <p>Each module works on its own and shares data with the rest, so a sale updates stock, receivables and the ledger at the same moment.</p>
+      </div>
+      <div class="grid g3">
+        <div class="card reveal"><div class="ico"><svg><use href="#i-cart"/></svg></div><h3>Sales and POS</h3><p>Fast counter checkout with barcode lookup, customers, orders, partial payments and returns.</p></div>
+        <div class="card reveal"><div class="ico"><svg><use href="#i-box"/></svg></div><h3>Products and inventory</h3><p>Categories, brands and units, multiple warehouses, stock transfers, adjustments and a full movement history.</p></div>
+        <div class="card reveal"><div class="ico"><svg><use href="#i-users"/></svg></div><h3>HR and payroll</h3><p>Employees, departments, attendance and leave, then payroll runs with deductions and printable payslips.</p></div>
+        <div class="card reveal"><div class="ico"><svg><use href="#i-receipt"/></svg></div><h3>Accounting</h3><p>A real double-entry ledger with a default chart of accounts, expenses, P&amp;L, balance sheet and trial balance.</p></div>
+        <div class="card reveal"><div class="ico"><svg><use href="#i-building"/></svg></div><h3>Businesses and branches</h3><p>Run several businesses under one account, each with its own branches, and switch between them in a click.</p></div>
+        <div class="card reveal"><div class="ico"><svg><use href="#i-shield"/></svg></div><h3>Roles and audit</h3><p>Fine-grained permissions per business or branch, plus an audit log of who did what and when.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="screens">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Screens</span>
+        <h2>Built for the counter and the back office.</h2>
+        <p>A clean, consistent interface across every module. Click a screen to enlarge. Screenshots use demo data.</p>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Screens">
+        <button class="tab" role="tab" aria-selected="true" aria-controls="s-pos">Point of sale</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="s-products">Products</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="s-orders">Orders</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="s-employees">Employees</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="s-roles">Roles</button>
+      </div>
+      <div class="gallery-panel" id="s-pos" role="tabpanel"><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>Sales · Point of sale</span></div><img class="zoomable" src="img/pos.webp" alt="Point of sale screen with a product grid, search and a cart with totals" width="1440" height="900" loading="lazy"></div><p class="caption">Point of sale: search or scan, build the cart, take payment.</p></div>
+      <div class="gallery-panel" id="s-products" role="tabpanel" hidden><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>Products</span></div><img class="zoomable" src="img/products.webp" alt="Product list with SKU, category, price and stock levels" width="1440" height="900" loading="lazy"></div><p class="caption">Product catalogue with prices, categories and live stock.</p></div>
+      <div class="gallery-panel" id="s-orders" role="tabpanel" hidden><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>Sales · Orders</span></div><img class="zoomable" src="img/orders.webp" alt="Orders list with order numbers, customers, totals and status" width="1440" height="900" loading="lazy"></div><p class="caption">Every order with its customer, total, payment and status.</p></div>
+      <div class="gallery-panel" id="s-employees" role="tabpanel" hidden><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>HR · Employees</span></div><img class="zoomable" src="img/employees.webp" alt="Employee list with departments, designations and salaries" width="1440" height="900" loading="lazy"></div><p class="caption">Employees by department, ready for attendance and payroll.</p></div>
+      <div class="gallery-panel" id="s-roles" role="tabpanel" hidden><div class="frame"><div class="frame-bar"><i></i><i></i><i></i><span>Settings · Roles</span></div><img class="zoomable" src="img/roles.webp" alt="Roles and permissions screen listing the built-in system roles" width="1440" height="900" loading="lazy"></div><p class="caption">Built-in and custom roles with module-level permissions.</p></div>
+    </div>
+  </section>
+
+  <section class="section-alt" id="branches">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Multi-branch by design</span>
+        <h2>One account, many businesses, every branch.</h2>
+        <p>BOS keeps each organisation's data strictly apart and lets a business grow from one shop to many without changing tools.</p>
+      </div>
+      <div class="diagram reveal">
+        <svg viewBox="0 0 980 260" role="img" aria-label="A tenant owns several businesses; each business has several branches; every request carries tenant, business and branch context and is checked against the user's role.">
+          <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="currentColor" style="color:var(--muted)"/></marker></defs>
+          <rect class="node-accent" x="20" y="98" width="170" height="64" rx="12"/><text x="105" y="126" text-anchor="middle" font-size="14" font-weight="600">Tenant</text><text class="sub" x="105" y="145" text-anchor="middle">your organisation</text>
+          <rect class="node" x="300" y="40" width="190" height="60" rx="12"/><text x="395" y="66" text-anchor="middle" font-size="14" font-weight="600">Business A</text><text class="sub" x="395" y="84" text-anchor="middle">own ledger · own staff</text>
+          <rect class="node" x="300" y="160" width="190" height="60" rx="12"/><text x="395" y="186" text-anchor="middle" font-size="14" font-weight="600">Business B</text><text class="sub" x="395" y="204" text-anchor="middle">switch in one click</text>
+          <rect class="node" x="600" y="14" width="160" height="50" rx="12"/><text x="680" y="44" text-anchor="middle" font-size="13.5" font-weight="600">Branch 1</text>
+          <rect class="node" x="600" y="76" width="160" height="50" rx="12"/><text x="680" y="106" text-anchor="middle" font-size="13.5" font-weight="600">Branch 2</text>
+          <rect class="node" x="600" y="164" width="160" height="50" rx="12"/><text x="680" y="194" text-anchor="middle" font-size="13.5" font-weight="600">Main branch</text>
+          <rect class="node" x="820" y="88" width="140" height="84" rx="12"/><text x="890" y="118" text-anchor="middle" font-size="13.5" font-weight="600">Role check</text><text class="sub" x="890" y="137" text-anchor="middle">module.action</text><text class="sub" x="890" y="154" text-anchor="middle">on every call</text>
+          <path class="edge" d="M190 120 C240 110 250 72 298 70" marker-end="url(#ar)"/><path class="edge" d="M190 140 C240 150 250 188 298 190" marker-end="url(#ar)"/>
+          <path class="edge" d="M490 62 C540 55 560 40 598 39" marker-end="url(#ar)"/><path class="edge" d="M490 78 C540 85 560 100 598 101" marker-end="url(#ar)"/><path class="edge" d="M490 190h108" marker-end="url(#ar)"/>
+          <path class="edge-dash" d="M760 101 C790 105 800 120 818 125" marker-end="url(#ar)"/><path class="edge-dash" d="M760 189 C790 185 800 150 818 145" marker-end="url(#ar)"/>
+        </svg>
+      </div>
+      <div class="principles" style="margin-top:24px">
+        <div class="principle reveal"><div class="ico"><svg><use href="#i-layers"/></svg></div><div><h4>Tenant isolation</h4><p>Every business table carries a tenant ID, and every query is scoped to it automatically.</p></div></div>
+        <div class="principle reveal"><div class="ico"><svg><use href="#i-key"/></svg></div><div><h4>Permissions that fit real teams</h4><p>Roles apply to a whole business or a single branch. 11 system roles ship ready to use.</p></div></div>
+        <div class="principle reveal"><div class="ico"><svg><use href="#i-lock"/></svg></div><div><h4>Secure sign-in</h4><p>Email OTP activation, TOTP two-factor login, token refresh and session management.</p></div></div>
+        <div class="principle reveal"><div class="ico"><svg><use href="#i-file"/></svg></div><div><h4>Full audit trail</h4><p>Important actions are logged with the user, the business and the time.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="accounting">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Accounting that keeps itself</span>
+        <h2>Every sale writes its own journal entry.</h2>
+        <p>Each business starts with a chart of accounts. From then on, everyday events post balanced double-entry journals, so reports are always up to date.</p>
+      </div>
+      <div class="table-wrap reveal">
+        <table class="ledger">
+          <thead><tr><th>Event</th><th>Debit</th><th>Credit</th></tr></thead>
+          <tbody>
+            <tr><td>Order completed</td><td>Accounts receivable · cost of goods sold</td><td>Sales revenue · sales tax payable · inventory</td></tr>
+            <tr><td>Payment received</td><td>Cash or bank</td><td>Accounts receivable</td></tr>
+            <tr><td>Return</td><td>Sales returns · tax payable · inventory</td><td>Accounts receivable · cost of goods sold</td></tr>
+            <tr><td>Stock adjustment</td><td>Inventory</td><td>Opening equity or inventory adjustments</td></tr>
+            <tr><td>Payroll paid</td><td>Salaries and wages</td><td>Bank · payroll deductions payable</td></tr>
+            <tr><td>Expense approved</td><td>Expense account</td><td>Cash, bank or payable</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chips reveal" style="margin-top:20px"><span class="chip">Profit and loss</span><span class="chip">Balance sheet</span><span class="chip">Trial balance</span><span class="chip">CSV export</span></div>
+    </div>
+  </section>
+
+  <section class="section-alt" id="tech">
+    <div class="wrap split">
+      <div class="reveal">
+        <span class="eyebrow">Under the hood</span>
+        <h3>A modern stack, easy to host.</h3>
+        <p>A Laravel API and a React single-page app, packaged so a small team can run it on one server or a container platform.</p>
+        <div class="chips" style="margin:18px 0">
+          <span class="chip">Laravel 12</span><span class="chip">PHP 8.2+</span><span class="chip">Sanctum</span><span class="chip">PostgreSQL</span><span class="chip">React 18</span><span class="chip">TypeScript</span><span class="chip">Vite</span><span class="chip">Tailwind</span><span class="chip">Zustand</span><span class="chip">React Query</span>
+        </div>
+        <ul class="checks">
+          <li><svg><use href="#i-check"/></svg>One Dockerfile serves the app and the API together</li>
+          <li><svg><use href="#i-check"/></svg>One-command install script for Debian 12 and 13</li>
+          <li><svg><use href="#i-check"/></svg>Feature tests for the API</li>
+        </ul>
+      </div>
+<pre class="code reveal"><span class="c"># run it with Docker</span>
+docker build -t bos .
+docker run -p 8080:8080 --env-file .env bos
+
+<span class="c"># or on a fresh Debian server</span>
+sudo bash deploy/install-debian.sh
+
+<span class="c"># every API call carries its context</span>
+GET /api/v1/dashboard/stats
+X-Tenant-ID:   …
+X-Business-ID: …
+X-Branch-ID:   …</pre>
+    </div>
+  </section>
+
+  <section id="roadmap">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Status</span>
+        <h2>All five build phases are in.</h2>
+      </div>
+      <div class="timeline">
+        <div class="tl reveal"><span class="phase">Phase 1</span><div><h4>Foundation</h4><p>Tenants, businesses, branches, users, roles, permissions, audit logs and secure sign-in.</p></div><span class="badge done">Done</span></div>
+        <div class="tl reveal"><span class="phase">Phase 2</span><div><h4>Products and inventory</h4><p>Catalogue, warehouses, transfers, adjustments and stock movements.</p></div><span class="badge done">Done</span></div>
+        <div class="tl reveal"><span class="phase">Phase 3</span><div><h4>Sales and POS</h4><p>Counter checkout with barcodes, customers, orders, payments and returns.</p></div><span class="badge done">Done</span></div>
+        <div class="tl reveal"><span class="phase">Phase 4</span><div><h4>HR and payroll</h4><p>Employees, attendance, leave, payroll runs and payslips.</p></div><span class="badge done">Done</span></div>
+        <div class="tl reveal"><span class="phase">Phase 5</span><div><h4>Accounting</h4><p>Automatic double-entry posting, financial reports and CSV export.</p></div><span class="badge done">Done</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap" style="padding-bottom:40px">
+    <div class="cta reveal">
+      <h2>Want BOS for your business?</h2>
+      <p>The code is open on GitHub. Get in touch for a demo, a pilot setup or to help build it.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="mailto:hello@sifat.email?subject=BOS"><svg><use href="#i-mail"/></svg>hello@sifat.email</a>
+        <a class="btn btn-ghost" href="https://github.com/hellosifat-dev/Bos" target="_blank" rel="noopener"><svg><use href="#i-github"/></svg>Source on GitHub</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> BOS · built by <a href="https://sifat.email">Sifat Ahmed</a></span>
+    <nav class="foot-links" aria-label="Other projects">
+      <a href="https://syncaura.site">SyncAura</a><a href="https://agent.sifat.cloud">SI Agent</a><a href="https://cognova.sifat.codes">CogNova</a><a href="https://mail.sifat.codes">Cognova Mail</a><a href="https://framenest.sifat.codes">FrameNest</a><a href="https://sifat.cloud">Sifat.cloud</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
